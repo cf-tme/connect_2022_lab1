@@ -2,62 +2,68 @@ import { jsonResponse } from "../utils/jsonResponse";
 import { IMAGE_KEY_PREFIX } from "../utils/constants";
 import { generateSignedURL } from "../utils/generateSignedURL";
 
-export const jsonResponse = (value: any, init: ResponseInit = {}) =>
-  new Response(JSON.stringify(value), {
-    headers: { "Content-Type": "application/json", ...init.headers },
-    ...init,
-  });
-
-const generatePreviewURL = ({
-  previewURLBase,
-  imagesKey,
-  isPrivate,
-}: {
-  previewURLBase: string;
-  imagesKey: string;
-  isPrivate: boolean;
-}) => {
-  // If isPrivate, generates a signed URL for the 'preview' variant
-  // Else, returns the 'blurred' variant URL which never requires signed URLs
-  // https://developers.cloudflare.com/images/cloudflare-images/serve-images/serve-private-images-using-signed-url-tokens
-
-  return "SIGNED_URL";
-};
-
 export const onRequestGet: PagesFunction<{
   IMAGES: KVNamespace;
-}> = async ({ env }) => {
-  const { imagesKey } = (await env.IMAGES.get("setup", "json")) as Setup;
+  DOWNLOAD_COUNTER: DurableObjectNamespace;
+}> = async ({ request, env }) => {
+  try {
+    const url = new URL(request.url);
+    const cursor = url.searchParams.get("cursor") || undefined;
 
-  const kvImagesList = await env.IMAGES.list<ImageMetadata>({
-    prefix: `image:uploaded:`,
-  });
+    const { imagesKey } = (await env.IMAGES.get("setup", "json")) as Setup;
 
-  const images = kvImagesList.keys
-    .map((kvImage) => {
-      try {
-        const { id, previewURLBase, name, alt, uploaded, isPrivate } =
-          kvImage.metadata as ImageMetadata;
+    const kvImagesList = await env.IMAGES.list<ImageMetadata>({
+      prefix: IMAGE_KEY_PREFIX,
+      limit: 20,
+      cursor,
+    });
 
-        const previewURL = generatePreviewURL({
-          previewURLBase,
-          imagesKey,
-          isPrivate,
-        });
+    const images = (
+      await Promise.all(
+        kvImagesList.keys.map(async (kvImage) => {
+          try {
+            const {
+              id,
+              previewURLBase,
+              name,
+              alt,
+              uploaded,
+              isPrivate,
+              downloadCounterId,
+            } = kvImage.metadata as ImageMetadata;
 
-        return {
-          id,
-          previewURL,
-          name,
-          alt,
-          uploaded,
-          isPrivate,
-        };
-      } catch {
-        return undefined;
-      }
-    })
-    .filter((image) => image !== undefined);
+            const previewURL = isPrivate
+              ? `${previewURLBase}/blurred`
+              : generateSignedURL({
+                  url: `${previewURLBase}/preview`,
+                  imagesKey,
+                });
 
-  return jsonResponse({ images });
+            const downloadCounter = env.DOWNLOAD_COUNTER.get(
+              env.DOWNLOAD_COUNTER.idFromString(downloadCounterId)
+            );
+            // This isn't a real internet request, so the host is irrelevant (https://developers.cloudflare.com/workers/platform/compatibility-dates#durable-object-stubfetch-requires-a-full-url).
+            const downloadCountResponse = await downloadCounter.fetch(
+              "https://images.pages.dev/"
+            );
+            const downloadCount = await downloadCountResponse.json<number>();
+
+            return {
+              id,
+              previewURL,
+              name,
+              alt,
+              uploaded,
+              isPrivate,
+              downloadCount,
+            };
+          } catch {}
+        })
+      )
+    ).filter((image) => image !== undefined);
+
+    return jsonResponse({ images, cursor: kvImagesList.cursor });
+  } catch {
+    return jsonResponse({ error: "Could not list images." });
+  }
 };
