@@ -15,7 +15,7 @@ interface ImageMetadata {
   alt: string;
   uploaded: string;
   isPrivate: boolean;
-  downloadCounterId: string;
+  //downloadCounterId: string;
 }
 
 interface Setup {
