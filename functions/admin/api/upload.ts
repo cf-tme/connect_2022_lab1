@@ -48,8 +48,8 @@ export const onRequestPost: PagesFunction<{
       };
     }>();
 
-    const downloadCounterId = env.DOWNLOAD_COUNTER.newUniqueId().toString();
-
+    //const downloadCounterId = env.DOWNLOAD_COUNTER.newUniqueId().toString();
+    const downloadCounterId = "2"
     const metadata: ImageMetadata = {
       id,
       previewURLBase: url.split("/").slice(0, -1).join("/"),
