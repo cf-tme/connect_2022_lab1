@@ -4,65 +4,77 @@ import { IMAGE_KEY_PREFIX } from "../../utils/constants";
 
 export const onRequestPost: PagesFunction<{
   IMAGES: KVNamespace;
+  DOWNLOAD_COUNTER: DurableObjectNamespace;
 }> = async ({ request, env }) => {
-  const { apiToken, accountId } = (await env.IMAGES.get(
-    "setup",
-    "json"
-  )) as Setup;
+  try {
+    const { apiToken, accountId } = (await env.IMAGES.get(
+      "setup",
+      "json"
+    )) as Setup;
 
-  // Prepare the Cloudflare Images API request body
-  const formData = await request.formData();
-  formData.set("requireSignedURLs", "true");
-  const alt = formData.get("alt") as string;
-  formData.delete("alt");
-  const isPrivate = formData.get("isPrivate") === "on";
-  formData.delete("isPrivate");
+    // Compatibility dates aren't yet possible to set: https://developers.cloudflare.com/workers/platform/compatibility-dates#formdata-parsing-supports-file
+    const formData = (await parseFormDataRequest(request)) as FormData;
+    formData.set("requireSignedURLs", "true");
+    const alt = formData.get("alt") as string;
+    formData.delete("alt");
+    const isPrivate = formData.get("isPrivate") === "on";
+    formData.delete("isPrivate");
 
-  // Upload the image to Cloudflare Images
-  const response = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1`,
-    {
-      method: "POST",
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${apiToken}`,
+    const response = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1`,
+      {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${apiToken}`,
+        },
+      }
+    );
+
+    const {
+      result: {
+        id,
+        filename: name,
+        uploaded,
+        variants: [url],
       },
-    }
-  );
+    } = await response.json<{
+      result: {
+        id: string;
+        filename: string;
+        uploaded: string;
+        requireSignedURLs: boolean;
+        variants: string[];
+      };
+    }>();
 
-  // Store the image metadata in KV
-  const {
-    result: {
+    const downloadCounterId = env.DOWNLOAD_COUNTER.newUniqueId().toString();
+
+    const metadata: ImageMetadata = {
       id,
-      filename: name,
+      previewURLBase: url.split("/").slice(0, -1).join("/"),
+      name,
+      alt,
       uploaded,
-      variants: [url],
-    },
-  } = await response.json<{
-    result: {
-      id: string;
-      filename: string;
-      uploaded: string;
-      requireSignedURLs: boolean;
-      variants: string[];
+      isPrivate,
+      downloadCounterId,
     };
-  }>();
 
-  const metadata: ImageMetadata = {
-    id,
-    previewURLBase: url.split("/").slice(0, -1).join("/"),
-    name,
-    alt,
-    uploaded,
-    isPrivate,
-  };
+    await env.IMAGES.put(
+      `${IMAGE_KEY_PREFIX}uploaded:${uploaded}`,
+      "Values stored in metadata.",
+      { metadata }
+    );
+    await env.IMAGES.put(`${IMAGE_KEY_PREFIX}${id}`, JSON.stringify(metadata));
 
-  await env.IMAGES.put(
-    `image:uploaded:${uploaded}`,
-    "Values stored in metadata.",
-    { metadata }
-  );
-  await env.IMAGES.put(`image:${id}`, JSON.stringify(metadata));
-
-  return jsonResponse(true);
+    return jsonResponse(true);
+  } catch {
+    return jsonResponse(
+      {
+        error:
+          "Could not upload image. Have you completed setup? Is it less than 10 MB? Is it a supported file type (PNG, JPEG, GIF, WebP)?",
+      },
+      { status: 500 }
+    );
+  }
 };
