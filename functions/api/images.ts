@@ -10,7 +10,7 @@ export const onRequestGet: PagesFunction<{
     const url = new URL(request.url);
     const cursor = url.searchParams.get("cursor") || undefined;
 
-    const { imagesKey } = (await env.IMAGES.get("setup", "json")) as Setup;
+    //const { imagesKey } = (await env.IMAGES.get("setup", "json")) as Setup;
 
     const kvImagesList = await env.IMAGES.list<ImageMetadata>({
       prefix: IMAGE_KEY_PREFIX,
