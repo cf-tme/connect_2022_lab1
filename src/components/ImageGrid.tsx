@@ -29,7 +29,7 @@ const ImageCard: FC<{ image: Image }> = ({
             <EyeIcon />
           </svg>
         </div>
-        {!isPrivate ? (
+{/*         {!isPrivate ? (
           <a
             className="text-green-800 bg-green-200 rounded-md h-8 w-8 p-1"
             aria-label="Download"
@@ -42,7 +42,7 @@ const ImageCard: FC<{ image: Image }> = ({
           <div className="text-gray-800 bg-gray-200 rounded-md h-8 w-8 p-1">
             <LockIcon />
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
