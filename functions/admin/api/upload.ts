@@ -71,7 +71,7 @@ export const onRequestPost: PagesFunction<{
     return jsonResponse(
       {
         error: error.toString(),
-        "test" : FormData.toString()
+        "test" : metadata.toString()
 
             },
       { status: 500 }
