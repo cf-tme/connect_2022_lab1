@@ -4,7 +4,7 @@ import { IMAGE_KEY_PREFIX } from "../../utils/constants";
 
 export const onRequestPost: PagesFunction<{
   IMAGES: KVNamespace;
-  DOWNLOAD_COUNTER: DurableObjectNamespace;
+  //DOWNLOAD_COUNTER: DurableObjectNamespace;
 }> = async ({ request, env }) => {
   try {
     const { apiToken, accountId } = (await env.IMAGES.get(
@@ -48,7 +48,7 @@ export const onRequestPost: PagesFunction<{
       };
     }>();
 
-    const downloadCounterId = env.DOWNLOAD_COUNTER.newUniqueId().toString();
+    //const downloadCounterId = env.DOWNLOAD_COUNTER.newUniqueId().toString();
 
     const metadata: ImageMetadata = {
       id,
@@ -57,7 +57,7 @@ export const onRequestPost: PagesFunction<{
       alt,
       uploaded,
       isPrivate,
-      downloadCounterId,
+      //downloadCounterId,
     };
 
     await env.IMAGES.put(
@@ -68,12 +68,12 @@ export const onRequestPost: PagesFunction<{
     await env.IMAGES.put(`${IMAGE_KEY_PREFIX}${id}`, JSON.stringify(metadata));
 
     return jsonResponse(true);
-  } catch {
+  } catch (error) {
     return jsonResponse(
       {
-        error:
-          "Could not upload image. Have you completed setup? Is it less than 10 MB? Is it a supported file type (PNG, JPEG, GIF, WebP)?",
-      },
+        error: error.toString()
+
+            },
       { status: 500 }
     );
   }
