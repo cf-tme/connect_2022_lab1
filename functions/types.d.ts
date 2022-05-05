@@ -5,7 +5,6 @@ interface Image {
   alt: string;
   uploaded: string;
   isPrivate: boolean;
-  downloadCount: number;
 }
 
 interface ImageMetadata {
@@ -15,7 +14,6 @@ interface ImageMetadata {
   alt: string;
   uploaded: string;
   isPrivate: boolean;
-  downloadCounterId: string;
 }
 
 interface Setup {

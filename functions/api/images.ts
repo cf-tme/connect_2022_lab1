@@ -4,7 +4,7 @@ import { generateSignedURL } from "../utils/generateSignedURL";
 
 export const onRequestGet: PagesFunction<{
   IMAGES: KVNamespace;
-  DOWNLOAD_COUNTER: DurableObjectNamespace;
+  //DOWNLOAD_COUNTER: DurableObjectNamespace;
 }> = async ({ request, env }) => {
   try {
     const url = new URL(request.url);
@@ -29,7 +29,6 @@ export const onRequestGet: PagesFunction<{
               alt,
               uploaded,
               isPrivate,
-              downloadCounterId,
             } = kvImage.metadata as ImageMetadata;
 
             const previewURL = isPrivate
@@ -39,14 +38,14 @@ export const onRequestGet: PagesFunction<{
                   imagesKey,
                 });
 
-            const downloadCounter = env.DOWNLOAD_COUNTER.get(
+/*             const downloadCounter = env.DOWNLOAD_COUNTER.get(
               env.DOWNLOAD_COUNTER.idFromString(downloadCounterId)
             );
             // This isn't a real internet request, so the host is irrelevant (https://developers.cloudflare.com/workers/platform/compatibility-dates#durable-object-stubfetch-requires-a-full-url).
             const downloadCountResponse = await downloadCounter.fetch(
               "https://images.pages.dev/"
             );
-            const downloadCount = await downloadCountResponse.json<number>();
+            const downloadCount = await downloadCountResponse.json<number>(); */
 
             return {
               id,
@@ -55,7 +54,6 @@ export const onRequestGet: PagesFunction<{
               alt,
               uploaded,
               isPrivate,
-              downloadCount,
             };
           } catch {}
         })

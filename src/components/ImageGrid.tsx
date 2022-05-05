@@ -6,7 +6,7 @@ import { LockIcon } from "./LockIcon";
 import { EyeIcon } from "./EyeIcon";
 
 const ImageCard: FC<{ image: Image }> = ({
-  image: { id, previewURL, name, alt, uploaded, isPrivate, downloadCount },
+  image: { id, previewURL, name, alt, uploaded, isPrivate},
 }) => {
   return (
     <div className="my-3 shadow-lg rounded-b-xl bg-white">
@@ -28,7 +28,6 @@ const ImageCard: FC<{ image: Image }> = ({
           <svg className="h-8 w-8 p-1">
             <EyeIcon />
           </svg>
-          <span className="tabular-nums">{downloadCount}</span>
         </div>
         {!isPrivate ? (
           <a
