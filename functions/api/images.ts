@@ -31,12 +31,12 @@ export const onRequestGet: PagesFunction<{
               isPrivate,
             } = kvImage.metadata as ImageMetadata;
 
-            const previewURL = isPrivate
+/*             const previewURL = isPrivate
               ? `${previewURLBase}/blurred`
               : generateSignedURL({
                   url: `${previewURLBase}/preview`,
                   imagesKey,
-                });
+                }); */
 
 /*             const downloadCounter = env.DOWNLOAD_COUNTER.get(
               env.DOWNLOAD_COUNTER.idFromString(downloadCounterId)
@@ -49,7 +49,7 @@ export const onRequestGet: PagesFunction<{
 
             return {
               id,
-              previewURL,
+              previewURLBase,
               name,
               alt,
               uploaded,
