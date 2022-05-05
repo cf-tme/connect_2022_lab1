@@ -11,15 +11,16 @@ export const onRequestPost: PagesFunction<{
       "setup",
       "json"
     )) as Setup;
-
-    // Compatibility dates aren't yet possible to set: https://developers.cloudflare.com/workers/platform/compatibility-dates#formdata-parsing-supports-file
-    const formData = (await parseFormDataRequest(request)) as FormData;
+  
+    // Prepare the Cloudflare Images API request body
+    const formData = await request.formData();
     formData.set("requireSignedURLs", "true");
     const alt = formData.get("alt") as string;
     formData.delete("alt");
     const isPrivate = formData.get("isPrivate") === "on";
     formData.delete("isPrivate");
-
+  
+    // Upload the image to Cloudflare Images
     const response = await fetch(
       `https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1`,
       {
@@ -30,7 +31,8 @@ export const onRequestPost: PagesFunction<{
         },
       }
     );
-
+  
+    // Store the image metadata in KV
     const {
       result: {
         id,
@@ -47,9 +49,7 @@ export const onRequestPost: PagesFunction<{
         variants: string[];
       };
     }>();
-
-    //const downloadCounterId = env.DOWNLOAD_COUNTER.newUniqueId().toString();
-
+  
     const metadata: ImageMetadata = {
       id,
       previewURLBase: url.split("/").slice(0, -1).join("/"),
@@ -57,15 +57,14 @@ export const onRequestPost: PagesFunction<{
       alt,
       uploaded,
       isPrivate,
-      //downloadCounterId,
     };
-
+  
     await env.IMAGES.put(
-      `${IMAGE_KEY_PREFIX}uploaded:${uploaded}`,
+      `image:uploaded:${uploaded}`,
       "Values stored in metadata.",
       { metadata }
     );
-    await env.IMAGES.put(`${IMAGE_KEY_PREFIX}${id}`, JSON.stringify(metadata));
+    await env.IMAGES.put(`image:${id}`, JSON.stringify(metadata));
 
     return jsonResponse(true);
   } catch (error) {
