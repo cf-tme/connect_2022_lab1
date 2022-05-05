@@ -63,7 +63,7 @@ export const onRequestGet: PagesFunction<{
     ).filter((image) => image !== undefined);
 
     return jsonResponse({ images, cursor: kvImagesList.cursor });
-  } catch {
-    return jsonResponse({ error: "Could not list images." });
+  } catch (error) {
+    return jsonResponse({ error: error.tostring() });
   }
 };
