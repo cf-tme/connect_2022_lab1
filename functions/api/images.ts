@@ -30,7 +30,7 @@ export const onRequestGet: PagesFunction<{
               uploaded,
               isPrivate,
             } = kvImage.metadata as ImageMetadata;
-
+            const previewURL= previewURLBase
 /*             const previewURL = isPrivate
               ? `${previewURLBase}/blurred`
               : generateSignedURL({
@@ -49,7 +49,7 @@ export const onRequestGet: PagesFunction<{
 
             return {
               id,
-              previewURLBase,
+              previewURL,
               name,
               alt,
               uploaded,
