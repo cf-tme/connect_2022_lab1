@@ -49,7 +49,7 @@ const ImageCard: FC<{ image: Image }> = ({
 };
 
 export const ImageGrid: FC = () => {
-  const { data, error } = useSWR<{ images: Image[] }>("/api/images");
+/*   const { data, error } = useSWR<{ images: Image[] }>("/api/images");
 
   if (error || data === undefined) {
     return (
@@ -58,9 +58,9 @@ export const ImageGrid: FC = () => {
         Please try again.
       </div>
     );
-  }
+  } */
 
-  /* const data = {
+  const data = {
     images: [
       {
         id: "8277aeb6-f3fb-445d-43f9-ae710b3ffc00",
@@ -126,7 +126,7 @@ export const ImageGrid: FC = () => {
         isPrivate: true,
       },
     ],
-  }; */
+  };
 
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
