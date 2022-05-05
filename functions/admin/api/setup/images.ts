@@ -2,32 +2,12 @@ import { jsonResponse } from "../../../utils/jsonResponse";
 
 const variantPayloads = [
   {
-    id: "blurred",
-    neverRequireSignedURLs: true,
-    options: {
-      blur: 15,
-      fit: "scale-down",
-      height: 360,
-      metadata: "none",
-      width: 360,
-    },
-  },
-  {
     id: "preview",
     options: {
       fit: "scale-down",
       height: 360,
       metadata: "none",
       width: 360,
-    },
-  },
-  {
-    id: "highres",
-    options: {
-      fit: "scale-down",
-      height: 2000,
-      metadata: "none",
-      width: 2000,
     },
   },
 ];
