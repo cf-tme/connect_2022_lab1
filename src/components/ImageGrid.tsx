@@ -133,7 +133,7 @@ export const ImageGrid: FC = () => {
       {data.images.map((image) => (
         <ImageCard image={image} key={image.id} />
       ))}
-      {data}
+      data
     </div>
   );
 };
