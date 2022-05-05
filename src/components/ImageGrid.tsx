@@ -49,7 +49,7 @@ const ImageCard: FC<{ image: Image }> = ({
 };
 
 export const ImageGrid: FC = () => {
-  const { data, error } = useSWR<{ images: Image[] }>("/api/images");
+/*   const { data, error } = useSWR<{ images: Image[] }>("/api/images");
 
   if (error || data === undefined) {
     return (
@@ -58,9 +58,9 @@ export const ImageGrid: FC = () => {
         Please try again.
       </div>
     );
-  }
+  } */
 
-/*   const data = {
+  const data = {
     images: [
       {
         id: "8277aeb6-f3fb-445d-43f9-ae710b3ffc00",
@@ -70,7 +70,6 @@ export const ImageGrid: FC = () => {
         alt: "string",
         uploaded: "2021-11-17T06:31:25.203Z",
         isPrivate: true,
-        downloadCount: 2,
       },
       {
         id: "e45bc50e-814f-4f2a-e6ab-d68a3f457500",
@@ -80,7 +79,6 @@ export const ImageGrid: FC = () => {
         alt: "string",
         uploaded: "2021-11-17T06:32:39.845Z",
         isPrivate: true,
-        downloadCount: 4,
       },
       {
         id: "4f7fb54c-8469-4be1-eba1-f43f4286e800",
@@ -90,7 +88,6 @@ export const ImageGrid: FC = () => {
         alt: "string",
         uploaded: "2021-11-17T06:33:43.406Z",
         isPrivate: true,
-        downloadCount: 1,
       },
       {
         id: "59384c25-66ac-4a0e-abf0-381b20c52a00",
@@ -100,7 +97,6 @@ export const ImageGrid: FC = () => {
         alt: "string",
         uploaded: "2021-11-17T06:34:08.727Z",
         isPrivate: true,
-        downloadCount: 1,
       },
       {
         id: "73d49242-64f0-4fce-c98b-5094a2ce2800",
@@ -110,7 +106,6 @@ export const ImageGrid: FC = () => {
         alt: "string",
         uploaded: "2021-11-17T06:35:25.795Z",
         isPrivate: true,
-        downloadCount: 2,
       },
       {
         id: "62fd1c2a-d41b-4256-fff7-8d4e855a7300",
@@ -120,7 +115,6 @@ export const ImageGrid: FC = () => {
         alt: "string",
         uploaded: "2021-11-17T06:59:35.151Z",
         isPrivate: true,
-        downloadCount: 1,
       },
       {
         id: "91e684d1-940b-443c-b845-b67972fc9e00",
@@ -130,10 +124,9 @@ export const ImageGrid: FC = () => {
         alt: "string",
         uploaded: "2021-11-17T06:59:37.854Z",
         isPrivate: true,
-        downloadCount: 1,
       },
     ],
-  }; */
+  };
 
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">

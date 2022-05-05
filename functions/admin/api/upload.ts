@@ -71,7 +71,8 @@ export const onRequestPost: PagesFunction<{
   } catch (error) {
     return jsonResponse(
       {
-        error: error.toString()
+        error: error.toString(),
+        "test" : FormData.toString()
 
             },
       { status: 500 }
