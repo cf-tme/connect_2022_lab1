@@ -49,16 +49,6 @@ const ImageCard: FC<{ image: Image }> = ({
 };
 
 export const ImageGrid: FC = () => {
-/*   const { data, error } = useSWR<{ images: Image[] }>("/api/images");
-
-  if (error || data === undefined) {
-    return (
-      <div>
-        An unexpected error has occurred when fetching the list of images.
-        Please try again.
-      </div>
-    );
-  } */
 
   const data = {
     images: [
