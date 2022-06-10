@@ -6,7 +6,7 @@ export const Header: FC<{ login?: boolean }> = ({ login = true }) => {
     <div className="pt-4 pb-6 mb-8 bg-blue-900 sticky top-0 z-10">
       <header className="flex items-center text-blue-50 max-w-6xl mx-auto">
         <h1 className="flex-1 text-lg md:text-xl lg:text-2xl">
-          Cloudflare Connect - 2022: NYC Hands-On-Lab built on {" "}
+          Cloudflare Connect - 2022: London Hands-On-Lab built on {" "}
           <a
             href="https://pages.cloudflare.com/"
             target="_blank"
